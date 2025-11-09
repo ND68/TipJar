@@ -1,6 +1,5 @@
 "use client"
 
-import React from 'react';
 import { WagmiProvider, createConfig, http } from 'wagmi';
 import { sepolia } from 'viem/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,15 +8,14 @@ import TipJar from './TipJar.jsx';
 
 const transport = http('YOUR_INFURA_OR_ALCHEMY_URL');
 
+// Creates link to an Ethereum node
 const config = createConfig(
   getDefaultConfig({
     chains: [sepolia],
     transports: {
       [sepolia.id]: transport,
     },
-    
-    // Minimal app metadata for wallet connection popups
-    appName: "AuditTip Widget",
+    appName: "TipJar Widget",
     walletConnectProjectId: 'YOUR_WALLETCONNECT_PROJECT_ID',
   }),
 );
@@ -25,7 +23,7 @@ const queryClient = new QueryClient();
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen w-full items-center text-center bg-zinc-50 font-sans py-30 px-120">
+    <div className="flex flex-col min-h-screen w-full items-center text-center bg-zinc-50 font-sans py-30 px-[20%]">
           <h1 className="text-5xl font-semibold leading-10 tracking-tight text-black p-10">
             The Great Hot Dog Debate: A Culinary Crisis of Cosmic Proportions
           </h1>
