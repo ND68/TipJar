@@ -60,7 +60,6 @@ export default function Home() {
                   </header>
                   <TipJar /> 
                 </div>
-                
               </ConnectKitProvider>
             </WagmiProvider>
           </QueryClientProvider>

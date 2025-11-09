@@ -39,7 +39,21 @@ const TipJarApp = () => {
     };
 
     return (
-        <div></div>
+        <div className="p-3">
+            <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                disabled={isPending}
+                onClick={handleTip}
+            >
+                Send Tip
+            </button>
+
+            {txHash && (
+                <p className="text-green-600 mt-2">
+                Tx Submitted: {txHash}
+                </p>
+            )}
+        </div>
     );
 }
 
