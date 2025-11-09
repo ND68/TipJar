@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAccount, useSendTransaction, useWaitForTransactionReceipt, useConfig } from 'wagmi';
-import { createPublicClient, http } from 'viem';
+import { createPublicClient, encodeFunctionData, http } from 'viem';
 import { sepolia } from 'viem/chains';
 import { parseEther } from 'viem';
 
@@ -36,7 +36,7 @@ const TipJarApp = () => {
 
     // Encodes the tip function call
     const encodeTipData = useMemo(() => {
-        return publicClient.abi.encodeFunctionData({
+        return encodeFunctionData({
             abi: TIP_JAR_ABI,
             functionName: 'tip',
             args: [MESSAGE]
@@ -64,4 +64,9 @@ const TipJarApp = () => {
         }
     };
 
+    return (
+        <div></div>
+    );
 }
+
+export default TipJarApp;

@@ -1,8 +1,31 @@
-import Image from "next/image";
+"use client"
+
+import React from 'react';
+import { WagmiProvider, createConfig, http } from 'wagmi';
+import { sepolia } from 'viem/chains';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ConnectKitProvider, getDefaultConfig, ConnectKitButton } from 'connectkit';
+import TipJar from './TipJar.jsx';
+
+const transport = http('YOUR_INFURA_OR_ALCHEMY_URL');
+
+const config = createConfig(
+  getDefaultConfig({
+    chains: [sepolia],
+    transports: {
+      [sepolia.id]: transport,
+    },
+    
+    // Minimal app metadata for wallet connection popups
+    appName: "AuditTip Widget",
+    walletConnectProjectId: 'YOUR_WALLETCONNECT_PROJECT_ID',
+  }),
+);
+const queryClient = new QueryClient();
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen w-full items-center text-center bg-zinc-50 font-sans pt-30 px-120">
+    <div className="flex flex-col min-h-screen w-full items-center text-center bg-zinc-50 font-sans py-30 px-120">
           <h1 className="text-5xl font-semibold leading-10 tracking-tight text-black p-10">
             The Great Hot Dog Debate: A Culinary Crisis of Cosmic Proportions
           </h1>
@@ -30,6 +53,19 @@ export default function Home() {
           <p className="text-xl text-black text-left py-5">
             So, let the debate rage on. Let philosophers starve and grill masters argue until dawn. The hot dog, whether a sandwich or a separate masterpiece, remains a beloved fixture of the global culinary landscape. Perhaps the only honest answer is this: the hot dog is a hot dog, and attempting to define it by the limitations of a mere sandwich is an insult to its complexity, its majesty, and its incredible, slightly unsettling flavor.
           </p>
+          <QueryClientProvider client={queryClient}>
+            <WagmiProvider config={config}>
+              <ConnectKitProvider>
+                <div className=" bg-gray-100 p-4">
+                  <header className="flex justify-center p-2 bg-white shadow-md rounded-lg">
+                    <ConnectKitButton />
+                  </header>
+                  <TipJar /> 
+                </div>
+                
+              </ConnectKitProvider>
+            </WagmiProvider>
+          </QueryClientProvider>
     </div>
   );
 }
