@@ -12,6 +12,9 @@ contract TipJar {
     // Map to track the total accumulated tips (in Wei) sent by each address.
     mapping(address => uint256) public contributors;
 
+    // For enumerating unique contributors
+    address[] public contributorList;
+
     // A struct to record the details of a tip.
     struct Tip {
         address sender;
@@ -44,6 +47,11 @@ contract TipJar {
     function tip(string memory _message) public payable {
         require(msg.value > 0, "Tip amount must be greater than zero.");
 
+        // If first-time contributor, add to list
+        if (contributors[msg.sender] == 0) {
+            contributorList.push(msg.sender);
+        }
+
         // Update Leaderboard data
         contributors[msg.sender] += msg.value;
 
@@ -67,6 +75,18 @@ contract TipJar {
         require(_index < tipHistory.length, "Index out of bounds.");
         Tip storage t = tipHistory[_index];
         return (t.sender, t.amount, t.message, t.timestamp);
+    }
+
+    // For getting the arrays needed to form a leaderboard. Will do sorting off chain to save gas
+    function getContributors() public view returns (address[] memory, uint256[] memory) {
+        uint256 length = contributorList.length;
+        uint256[] memory amounts = new uint256[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            amounts[i] = contributors[contributorList[i]];
+        }
+
+        return (contributorList, amounts);
     }
 
     // For owners to withdraw

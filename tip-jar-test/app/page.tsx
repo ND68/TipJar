@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen w-full items-center text-center bg-zinc-50 font-sans py-30 px-[20%]">
           <h1 className="text-5xl font-semibold leading-10 tracking-tight text-black p-10">
-            The Great Hot Dog Debate: A Culinary Crisis of Cosmic Proportions
+            The Great Hot Dog Debate: Are Hot Dogs Sandwiches?
           </h1>
           <h2 className="text-2xl font-semibold leading-10 tracking-tight text-black">
             By Google Gemini
