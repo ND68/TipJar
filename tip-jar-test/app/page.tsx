@@ -5,8 +5,9 @@ import { sepolia } from 'viem/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider, getDefaultConfig, ConnectKitButton } from 'connectkit';
 import TipJar from './TipJar.jsx';
+import TipJarLeaderboard from './TipJarLeaderboard.jsx';
 
-const transport = http('YOUR_INFURA_OR_ALCHEMY_URL');
+const transport = http();
 
 // Creates link to an Ethereum node
 const config = createConfig(
@@ -54,11 +55,12 @@ export default function Home() {
           <QueryClientProvider client={queryClient}>
             <WagmiProvider config={config}>
               <ConnectKitProvider>
-                <div className=" bg-gray-100 p-4">
-                  <header className="flex justify-center p-2 bg-white shadow-md rounded-lg">
+                <div className=" bg-gray-100 p-4 w-[50%] rounded-xl">
+                  <div className="flex justify-center p-2 bg-white shadow-md rounded-lg">
                     <ConnectKitButton />
-                  </header>
+                  </div>
                   <TipJar /> 
+                  <TipJarLeaderboard />
                 </div>
               </ConnectKitProvider>
             </WagmiProvider>
