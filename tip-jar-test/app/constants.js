@@ -14,6 +14,14 @@ export const TIP_JAR_ABI = [
     "stateMutability": "payable",
     "type": "function"
   },
+  // Get owner
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
   // Withdraw function (owner only)
   {
     "inputs": [],

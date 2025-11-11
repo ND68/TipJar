@@ -1,4 +1,4 @@
-import { useAccount, useWriteContract } from 'wagmi';
+import { useAccount, useWriteContract, useReadContract } from 'wagmi';
 import { parseEther, encodeFunctionData } from 'viem';
 import { sepolia } from 'viem/chains';
 import { useState, useEffect } from 'react';
@@ -10,7 +10,7 @@ const DEFAULT_MESSAGE = "Here's a tip!"; // Default message
 
 
 const TipJar = () => {
-    const { isConnected } = useAccount();
+    const { address, isConnected } = useAccount();
     const [status, setStatus] = useState('Ready');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [amount, setAmount] = useState(DEFAULT_TIP_AMOUNT);
@@ -50,10 +50,31 @@ const TipJar = () => {
         } else {
             setStatus("Ready")
             if (isPending) setStatus("Waiting for wallet confirmation…");
-            if (isSuccess) setStatus("Tip sent! Thanks for supporting.");
+            if (isSuccess) setStatus("Transaction successful! Thanks for supporting.");
             if (error) setStatus("Transaction failed. Try again.");
         }
     }, [isPending, isSuccess, error, isConnected]);
+
+    // Get the owner from chain
+    const { data: owner } = useReadContract({
+        address: CONTRACT_ADDRESS,
+        abi: TIP_JAR_ABI,
+        functionName: "owner",
+        chainId: sepolia.id,
+    });
+
+    // Compares contract owner to connected wallet address
+    const isOwner = isConnected && owner?.toLowerCase() === address?.toLowerCase();
+
+    // Withdraw function
+    const handleWithdraw = () => {
+        writeContract({
+            address: CONTRACT_ADDRESS,
+            abi: TIP_JAR_ABI,
+            functionName: 'withdraw',
+            chainId: sepolia.id,
+        });
+    };
 
     return (
         <div className="flex flex-col items-center gap-4 w-full p-4 max-w-sm bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
@@ -69,18 +90,30 @@ const TipJar = () => {
                 </div>
 
                 {/* Once connected to a wallet, a user can start tipping */}
+                {/* If connected wallet is owner, user can withdraw */}
                 {isConnected && 
-                    <button
-                        onClick={openModal}
-                        disabled={isPending}
-                        className={`w-full py-2 rounded-lg font-semibold text-white transition
-                        ${isPending
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-blue-500 hover:bg-blue-600 active:scale-[0.98]"}
-                        `}
-                    >
-                        {isPending ? "Sending…" : "Send Tip"}
-                    </button>         
+                    <>  
+                        {isOwner ? (
+                            <button
+                                onClick={handleWithdraw}
+                                className="w-full py-2 mt-4 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600"
+                            >
+                                {isPending ? "Withdrawing…" : "Withdraw Tips"}
+                            </button>
+                        ) :
+                            <button
+                                onClick={openModal}
+                                disabled={isPending}
+                                className={`w-full py-2 rounded-lg font-semibold text-white transition
+                                ${isPending
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : "bg-blue-500 hover:bg-blue-600 active:scale-[0.98]"}
+                                `}
+                            >
+                                {isPending ? "Sending…" : "Send Tip"}
+                            </button>
+                        }    
+                    </>
                 }
 
                 <p className="text-sm text-gray-700 mt-3">{status}</p>       
