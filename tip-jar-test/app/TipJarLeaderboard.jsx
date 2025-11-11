@@ -15,7 +15,7 @@ const TipJarLeaderboard = () => {
         if (showLoading) setLoading(true);
 
         // Fetch all contributors and amounts
-        const [addresses, amounts] = await publicClient.readContract({
+        const [addresses, amounts, names] = await publicClient.readContract({
             address: CONTRACT_ADDRESS,
             abi: TIP_JAR_ABI,
             functionName: "getContributors",
@@ -25,6 +25,7 @@ const TipJarLeaderboard = () => {
         const data = addresses.map((addr, i) => ({
             address: addr,
             amount: amounts[i],
+            name: names[i]
         }));
 
         // 3️⃣ Sort descending by amount
@@ -56,13 +57,18 @@ const TipJarLeaderboard = () => {
         <p className="text-center py-4">No tips yet!</p>
       ) : (
         <ul>
-          {leaderboard.slice(0, 10).map(({ address, amount }, idx) => (
+          {leaderboard.slice(0, 10).map(({ address, amount, name }, idx) => (
             <li
               key={address}
               className="py-2 px-3 flex justify-between border-b border-gray-300 rounded-xl"
             >
-              <span>
-                {idx + 1}. {address.slice(0, 6)}...{address.slice(-4)}
+              <span className="relative inline-block group">
+                <span className="inline group-hover:hidden">
+                    {idx + 1}. {name === "" ? `${address.slice(0, 6)}...${address.slice(-4)}` : name}
+                </span>
+                <span className="hidden group-hover:inline text-gray-600">
+                    {idx + 1}. {address.slice(0, 6)}...{address.slice(-4)}
+                </span>
               </span>
               <span>{Number(formatEther(amount)).toFixed(3)} ETH</span>
             </li>
