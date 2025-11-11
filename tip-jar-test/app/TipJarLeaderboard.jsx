@@ -48,10 +48,10 @@ const TipJarLeaderboard = () => {
   }, [publicClient]);
 
   return (
-    <div className="p-4 rounded-lg w-full shadow-lg mx-auto text-black bg-white">
+    <div className="p-4 rounded-lg w-full shadow-lg mx-auto text-black bg-white mt-20">
       <h2 className="text-2xl font-semibold mb-4 border-b text-black pb-2">Top Contributors</h2>
       {loading ? (
-        <p className="text-center py-4">Loading leaderboard...</p>
+        <p className="text-center py-4 text-gray-700">Loading Leaderboard...</p>
       ) : leaderboard.length === 0 ? (
         <p className="text-center py-4">No tips yet!</p>
       ) : (
@@ -61,7 +61,7 @@ const TipJarLeaderboard = () => {
               key={address}
               className="py-2 px-3 flex justify-between border-b border-gray-300 rounded-xl"
             >
-              <span className="relative inline-block group">
+              <span className="relative inline-block group font-semibold">
                 <span className="inline group-hover:hidden">
                     {idx + 1}. {name === "" ? `${address.slice(0, 6)}...${address.slice(-4)}` : name}
                 </span>

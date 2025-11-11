@@ -3,19 +3,17 @@
 import { WagmiProvider, createConfig, http } from 'wagmi';
 import { sepolia } from 'viem/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConnectKitProvider, getDefaultConfig, ConnectKitButton } from 'connectkit';
+import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
 import TipJar from './TipJar.jsx';
 import TipJarLeaderboard from './TipJarLeaderboard.jsx';
 import TipJarFeed from './TipJarFeed.jsx'
-
-const transport = http();
 
 // Creates link to an Ethereum node
 const config = createConfig(
   getDefaultConfig({
     chains: [sepolia],
     transports: {
-      [sepolia.id]: transport,
+      [sepolia.id]: http(),
     },
     appName: "TipJar Widget",
     walletConnectProjectId: 'YOUR_WALLETCONNECT_PROJECT_ID',
@@ -55,11 +53,8 @@ export default function Home() {
           </p>
           <QueryClientProvider client={queryClient}>
             <WagmiProvider config={config}>
-              <ConnectKitProvider>
-                <div className=" bg-gray-100 p-4 w-[50%] rounded-xl">
-                  <div className="flex justify-center p-2 bg-white shadow-md rounded-lg">
-                    <ConnectKitButton />
-                  </div>
+              <ConnectKitProvider options={{ enforceSupportedChains: true }}>
+                <div className="flex flex-col items-center bg-gray-100 p-4 w-[50%] rounded-xl">
                   <TipJar /> 
                   <TipJarLeaderboard />
                   <TipJarFeed />
