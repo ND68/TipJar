@@ -12,14 +12,18 @@ contract TipJar {
     // Map to track the total accumulated tips (in Wei) sent by each address.
     mapping(address => uint256) public contributors;
 
+    // Mapping from contributor address to nickname
+    mapping(address => string) public nicknames;
+
     // For enumerating unique contributors
-    address[] public contributorList;
+    address[] public allContributorsList;
 
     // A struct to record the details of a tip.
     struct Tip {
         address sender;
         uint256 amount;
         string message;
+        string nickname;
         uint256 timestamp;
     }
 
@@ -27,7 +31,7 @@ contract TipJar {
     Tip[] private tipHistory;
 
     // Event emitted when a tip is successfully sent
-    event TipSent(address indexed sender, uint256 amount, string message, uint256 timestamp);
+    event TipSent(address indexed sender, uint256 amount, string message, string nickname, uint256 timestamp);
 
     // Event emitted when the owner withdraws funds.
     event Withdrawal(address indexed receiver, uint256 amount);
@@ -44,12 +48,17 @@ contract TipJar {
     }
 
     // Core Tipping Function
-    function tip(string memory _message) public payable {
+    function tip(string memory _message, string memory _nickname) public payable {
         require(msg.value > 0, "Tip amount must be greater than zero.");
 
         // If first-time contributor, add to list
         if (contributors[msg.sender] == 0) {
-            contributorList.push(msg.sender);
+            allContributorsList.push(msg.sender);
+        }
+
+        // Store nickname if provided (overwrite existing if desired)
+        if (bytes(_nickname).length > 0) {
+            nicknames[msg.sender] = _nickname;
         }
 
         // Update Leaderboard data
@@ -60,11 +69,12 @@ contract TipJar {
             msg.sender,
             msg.value,
             _message,
+            _nickname,
             block.timestamp
         ));
 
         // Notify frontend of new tip
-        emit TipSent(msg.sender, msg.value, _message, block.timestamp);
+        emit TipSent(msg.sender, msg.value, _message, _nickname, block.timestamp);
     }
 
     function getTipCount() public view returns (uint256) {
@@ -78,16 +88,40 @@ contract TipJar {
     }
 
     // For getting the arrays needed to form a leaderboard. Will do sorting off chain to save gas
-    function getContributors() public view returns (address[] memory, uint256[] memory) {
-        uint256 length = contributorList.length;
+    function getContributors() public view returns (address[] memory, uint256[] memory, string[] memory) {
+        uint256 length = allContributorsList.length;
         uint256[] memory amounts = new uint256[](length);
+        string[] memory names = new string[](length);
 
         for (uint256 i = 0; i < length; i++) {
-            amounts[i] = contributors[contributorList[i]];
+            amounts[i] = contributors[allContributorsList[i]];
+            names[i] = nicknames[allContributorsList[i]];
         }
 
-        return (contributorList, amounts);
+        return (allContributorsList, amounts, names);
     }
+
+    function getTipHistory() public view returns (address[] memory, uint256[] memory, string[] memory, string[] memory, uint256[] memory) {
+        uint256 length = tipHistory.length;
+
+        address[] memory senders = new address[](length);
+        uint256[] memory amounts = new uint256[](length);
+        string[] memory messages = new string[](length);
+        string[] memory names = new string[](length);
+        uint256[] memory timestamps = new uint256[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            Tip storage t = tipHistory[i];
+            senders[i] = t.sender;
+            amounts[i] = t.amount;
+            messages[i] = t.message;
+            names[i] = nicknames[t.sender];
+            timestamps[i] = t.timestamp;
+        }
+
+        return (senders, amounts, messages, names, timestamps);
+    }
+
 
     // For owners to withdraw
     function withdraw() public onlyOwner {
