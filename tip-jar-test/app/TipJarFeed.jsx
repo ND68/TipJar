@@ -74,7 +74,7 @@ const TipJarFeed = () => {
         ) : 
             <div>
                 <ul className="space-y-4">
-                {feed.map((tip, idx) => (
+                {feed.slice(0, 6).map((tip, idx) => (
                 <li
                     key={idx}
                     className="flex justify-between w-full items-start border rounded-lg p-4 hover:bg-gray-50 transition-colors"

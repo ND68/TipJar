@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 /**
@@ -43,8 +44,8 @@ contract TipJar {
     }
 
     // Executed only once upon deployment, setting the deployer as the owner.
-    constructor() payable {
-        owner = payable(msg.sender);
+    constructor(address _owner) payable {
+        owner = payable(_owner);
     }
 
     // Core Tipping Function
