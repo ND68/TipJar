@@ -1,5 +1,5 @@
 import { useAccount, useWriteContract, useReadContract } from 'wagmi';
-import { parseEther, Address } from 'viem';
+import { parseEther, Address, isAddress } from 'viem';
 import { sepolia } from 'viem/chains';
 import { useState, useEffect } from 'react';
 import { TIP_JAR_ABI } from './constants.js'
@@ -10,7 +10,6 @@ const DEFAULT_MESSAGE = "Here's a tip!"; // Default message
 
 type TipJarProps = {
   CONTRACT_ADDRESS?: string | null;
-  setContractAddress?: (address: string) => void;
 };
 
 const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
@@ -69,7 +68,6 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
             value: parseEther(amount),
             chainId: sepolia.id,
         });
-
     };
 
     useEffect(() => {
@@ -105,7 +103,7 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
         });
     };
 
-    if (!CONTRACT_ADDRESS && !deployedAddress) {
+    if (!CONTRACT_ADDRESS || !isAddress(CONTRACT_ADDRESS)) {
         return (
             <div className="flex flex-col items-center gap-4 w-full p-4 max-w-sm bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
                 <h2 className="text-xl font-bold mb-2 text-black">Create Your Tip Jar</h2>
