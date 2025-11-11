@@ -48,9 +48,8 @@ const TipJarLeaderboard = () => {
   }, [publicClient]);
 
   return (
-    <div className="p-4 rounded-lg w-full mx-auto text-black">
-      <h2 className="text-xl font-semibold mb-2 text-center">Top Contributors</h2>
-
+    <div className="p-4 rounded-lg w-full shadow-lg mx-auto text-black bg-white">
+      <h2 className="text-2xl font-semibold mb-4 border-b text-black pb-2">Top Contributors</h2>
       {loading ? (
         <p className="text-center py-4">Loading leaderboard...</p>
       ) : leaderboard.length === 0 ? (
