@@ -11,7 +11,7 @@ import TipJarFeed from './TipJarFeed'
 
 // MAIN TIPJAR CONTRACT ADDRESS
 // PASTE TIPJAR ADDRESS HERE AFTER DEPLOYING TIPJAR
-const CONTRACT_ADDRESS = "ENTER CONTRACT ADDRESS HERE";
+const CONTRACT_ADDRESS = "0x56dbc51a86440b123e93aebb1f4e277a014510d3";
 
 // Creates link to an Ethereum node
 const config = createConfig(
@@ -59,10 +59,10 @@ export default function Home() {
           <QueryClientProvider client={queryClient}>
             <WagmiProvider config={config}>
               <ConnectKitProvider >
-                <div className="flex flex-col items-center bg-gray-100 p-4 rounded-xl">
+                <div className="flex flex-col items-center bg-gray-100 p-4 rounded-xl w-full">
                   <TipJar CONTRACT_ADDRESS={CONTRACT_ADDRESS} /> 
-                  {/* <TipJarLeaderboard CONTRACT_ADDRESS={CONTRACT_ADDRESS}/> */}
-                  {/* <TipJarFeed CONTRACT_ADDRESS={CONTRACT_ADDRESS}/> */}
+                  <TipJarLeaderboard CONTRACT_ADDRESS={CONTRACT_ADDRESS}/>
+                  <TipJarFeed CONTRACT_ADDRESS={CONTRACT_ADDRESS}/>
                 </div>
               </ConnectKitProvider>
             </WagmiProvider>

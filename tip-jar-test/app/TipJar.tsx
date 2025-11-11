@@ -46,8 +46,6 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                 functionName: "createMyTipJar",
                 chainId: sepolia.id,
             });
-            setIsDeploying(false);
-            setStatus("Waiting on Contract Address...");
         } catch (err) {
             console.error(err);
             setIsDeploying(false);
@@ -58,19 +56,17 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
     const receipt = useWaitForTransactionReceipt({hash: txHash});
     
     useEffect(() => {
-        if (!receipt.data) return;
+        if (!receipt.data || !isDeploying) return;
 
         const log = receipt.data.logs[0];
-        console.log(log)
-
         const newAddress = "0x" + log.data.slice(-40) as Address;
-        console.log(newAddress)
         
         if (newAddress) {
-            setStatus("TipJar deployed!");
             setDeployedAddress(newAddress);
+            setIsDeploying(false);
         } else {
             setStatus("Deployment succeeded but couldn't read address from event.");
+            setIsDeploying(false);
         }
     }, [receipt.data, txHash])
 
@@ -100,10 +96,11 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
         } else {
             setStatus("Ready")
             if (isPending) setStatus("Waiting for wallet confirmation…");
-            if (isSuccess) setStatus("Transaction successful! Thanks for supporting.");
+            if (isSuccess && !isDeploying) setStatus("Transaction successful! Thanks for supporting.");
+            if (isSuccess && isDeploying) setStatus("Fetching contract address...");
             if (error) setStatus("Transaction failed. Try again.");
         }
-    }, [isPending, isSuccess, error, isConnected]);
+    }, [isPending, isSuccess, error, isConnected, isDeploying]);
 
     // Get the owner from chain
     const { data: owner } = useReadContract({
@@ -129,12 +126,11 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
 
     if (!CONTRACT_ADDRESS || !isAddress(CONTRACT_ADDRESS)) {
         return (
-            <div className="flex flex-col items-center gap-4 w-full p-4 max-w-sm bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
+            <div className="flex flex-col items-center gap-4 w-full p-6 bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
                 <h2 className="text-xl font-bold mb-2 text-black">Create Your Tip Jar</h2>
-                <p className="text-gray-600">
-                Deploy a new on-chain instance of your tip jar. Only costs gas.
+                <p className="text-black">
+                    Deploy a new on-chain instance of your tip jar. 
                 </p>
-                <p className=" text-gray-600">Connect your wallet to get started!</p>
                 {/* Button to conect wallet */}
                 <div className="flex justify-center w-full mb-4">
                     <ConnectKitButton />
@@ -147,9 +143,26 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                 >
                     {isDeploying ? "Deploying..." : "Deploy Tip Jar"}
                 </button>
+
+                {deployedAddress ? (
+                    <div className="p-4 rounded-lg border border-gray-300 bg-gray-50 max-w-md mx-auto">
+                        <p className="text-gray-700 mb-2">
+                            This is your TipJar contract address. Paste this address into the CONTRACT_ADDRESS variable in your code to start using TipJar!
+                        </p>
+                        <span
+                            className={"cursor-pointer select-all px-3 py-2 rounded-md font-mono text-sm transition-colors duration-200 text-blue-600 hover:bg-blue-50"}
+                            title="Click to copy"    
+                        >
+                            {deployedAddress}
+                        </span>
+                    </div>
+                ) : 
+                    <span className='text-black'>{status}</span>
+                }
+
                 {txHash && (
                     <a
-                    className="text-green-700 underline text-sm mt-2 block"
+                    className="text-green-700 underline text-sm block"
                     href={`https://sepolia.etherscan.io/tx/${txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -157,11 +170,6 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                     View on Etherscan
                     </a>
                 )}
-                {deployedAddress ? (
-                    <span className='text-black'>{deployedAddress}</span>
-                ) : 
-                    <span className='text-black'>{status}</span>
-                }
             </div>
         );
     }
