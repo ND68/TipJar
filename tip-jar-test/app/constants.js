@@ -112,3 +112,51 @@ export const TIP_JAR_ABI = [
     "type": "event"
   }
 ];
+
+export const TIP_JAR_FACTORY_ABI = [
+  {
+    "inputs": [],
+    "name": "createMyTipJar",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "tipJarOf",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "tipJar",
+        "type": "address"
+      }
+    ],
+    "name": "TipJarCreated",
+    "type": "event"
+  }
+]

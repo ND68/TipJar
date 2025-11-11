@@ -1,12 +1,13 @@
-import { useAccount, useWriteContract, useReadContract } from 'wagmi';
+import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt, UseWaitForTransactionReceiptReturnType} from 'wagmi';
 import { parseEther, Address, isAddress } from 'viem';
 import { sepolia } from 'viem/chains';
 import { useState, useEffect } from 'react';
-import { TIP_JAR_ABI } from './constants.js'
+import { TIP_JAR_ABI, TIP_JAR_FACTORY_ABI } from './constants.js'
 import { ConnectKitButton } from 'connectkit';
 
 const DEFAULT_TIP_AMOUNT = '0.0003'; // Default tip amount in ETH, approx $1 USD
 const DEFAULT_MESSAGE = "Here's a tip!"; // Default message
+const FACTORY_ADDRESS = "0x3dabcEd4Ba74451D5E023A83A99AbAf956f7C529" // Address of Tip Jar Factory Contract
 
 type TipJarProps = {
   CONTRACT_ADDRESS?: string | null;
@@ -27,28 +28,48 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
-    async function deployContract() {
-        try {
-            setIsDeploying(true);
-
-            // TODO: use ethers.js Wallet + Factory here
-            // const contract = await factory.deploy();
-            // await contract.deployed();
-
-        setTimeout(() => {
-            const fakeAddress = "0xFAKE_DEPLOYED_123";
-            setDeployedAddress(fakeAddress);
-            setIsDeploying(false);
-        }, 2000);
-
-        } catch (err) {
-        console.error(err);
-        setIsDeploying(false);
-        }
-    }
-
     // Transaction handling hooks
     const { writeContract, data: txHash, isPending, isSuccess, error } = useWriteContract();
+
+    const handleDeploy = async () => {
+        if (!isConnected) {
+            setStatus("Please connect your wallet first.");
+            return;
+        }
+
+        setIsDeploying(true);
+        setStatus("Deploying TipJar...");
+        try {
+            writeContract({
+                address: FACTORY_ADDRESS,
+                abi: TIP_JAR_FACTORY_ABI,
+                functionName: "createMyTipJar",
+                chainId: sepolia.id,
+            });
+
+            if (!txHash) return;
+
+            // Wait for confirmation
+            const receipt = useWaitForTransactionReceipt({ hash: txHash });
+            const log = receipt.data;
+            console.log(log)
+            console.log(receipt)
+            if (!log) throw new Error("No TipJarCreated event found");
+
+            // const newAddress = log?.data as Address;
+            // if (newAddress) {
+            //     setStatus("TipJar deployed!");
+            //     setDeployedAddress(newAddress);
+            // } else {
+            //     setStatus("Deployment succeeded but couldn't read address from event.");
+            // }
+            // setIsDeploying(false);
+        } catch (err) {
+            console.error(err);
+            setIsDeploying(false);
+            setStatus("Deployment failed. See console for details.");
+        }
+    };
 
     const handleTip = () => {
         if (!isConnected) {
@@ -107,23 +128,38 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
         return (
             <div className="flex flex-col items-center gap-4 w-full p-4 max-w-sm bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
                 <h2 className="text-xl font-bold mb-2 text-black">Create Your Tip Jar</h2>
-                <p className="mb-4 text-gray-600">
+                <p className="text-gray-600">
                 Deploy a new on-chain instance of your tip jar. Only costs gas.
                 </p>
+                <p className=" text-gray-600">Connect your wallet to get started!</p>
+                {/* Button to conect wallet */}
+                <div className="flex justify-center w-full mb-4">
+                    <ConnectKitButton />
+                </div>
 
-                    <button
+                <button
                     className="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer disabled:opacity-50"
                     disabled={isDeploying}
-                    onClick={deployContract}
+                    onClick={handleDeploy}
                 >
                     {isDeploying ? "Deploying..." : "Deploy Tip Jar"}
                 </button>
+                {txHash && (
+                    <a
+                    className="text-green-700 underline text-sm mt-2 block"
+                    href={`https://sepolia.etherscan.io/tx/${txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    View on Etherscan
+                    </a>
+                )}
+                {deployedAddress && (
+                    <span>{deployedAddress}</span>
+                )}
             </div>
         );
     }
-
-    // Resolve the address that we actually want to operate on
-    const NEW_CONTRACT_ADDRESS = CONTRACT_ADDRESS ?? deployedAddress;
 
     return (
         <div className="flex flex-col items-center gap-4 w-full p-4 max-w-sm bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
