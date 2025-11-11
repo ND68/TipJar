@@ -1,12 +1,13 @@
 // Contract Address
-export const CONTRACT_ADDRESS = "0x32423A9F5B042672022E5E312D82ADDFE9B15830";
+export const CONTRACT_ADDRESS = "0x26B9F7a75572B45A4638441a1b1d16E35305A581";
 
 // ABIs for precisely defining function calls
 export const TIP_JAR_ABI = [
   // Tip function
   {
     "inputs": [
-      { "internalType": "string", "name": "_message", "type": "string" }
+      { "internalType": "string", "name": "_message", "type": "string" },
+      { "internalType": "string", "name": "_nickname", "type": "string" }
     ],
     "name": "tip",
     "outputs": [],
@@ -52,11 +53,26 @@ export const TIP_JAR_ABI = [
     "name": "getContributors",
     "outputs": [
       { "internalType": "address[]", "name": "", "type": "address[]" },
-      { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+      { "internalType": "string[]", "name": "", "type": "string[]" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
+  // Get feed info
+  {
+    "inputs": [],
+    "name": "getTipHistory",
+    "outputs": [
+      { "internalType": "address[]", "name": "", "type": "address[]" },
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+      { "internalType": "string[]", "name": "", "type": "string[]" },
+      { "internalType": "string[]", "name": "", "type": "string[]" },
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
   // Contributors mapping (optional direct read)
   {
     "inputs": [
