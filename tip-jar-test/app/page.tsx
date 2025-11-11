@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider, getDefaultConfig, ConnectKitButton } from 'connectkit';
 import TipJar from './TipJar.jsx';
 import TipJarLeaderboard from './TipJarLeaderboard.jsx';
+import TipJarFeed from './TipJarFeed.jsx'
 
 const transport = http();
 
@@ -61,6 +62,7 @@ export default function Home() {
                   </div>
                   <TipJar /> 
                   <TipJarLeaderboard />
+                  <TipJarFeed />
                 </div>
               </ConnectKitProvider>
             </WagmiProvider>

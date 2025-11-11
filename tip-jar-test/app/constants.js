@@ -1,5 +1,5 @@
 // Contract Address
-export const CONTRACT_ADDRESS = "0x26B9F7a75572B45A4638441a1b1d16E35305A581";
+export const CONTRACT_ADDRESS = "0x38Fca610A2fc6de68a12f13C15d23CAa7fbfbba3";
 
 // ABIs for precisely defining function calls
 export const TIP_JAR_ABI = [
@@ -72,7 +72,7 @@ export const TIP_JAR_ABI = [
     ],
     "stateMutability": "view",
     "type": "function"
-  }
+  },
   // Contributors mapping (optional direct read)
   {
     "inputs": [

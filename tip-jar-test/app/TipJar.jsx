@@ -22,7 +22,7 @@ const TipJarApp = () => {
         address: CONTRACT_ADDRESS,
         abi: TIP_JAR_ABI,
         functionName: 'tip',
-        args: ["Here's a tip!"],
+        args: ["Here's a tip!", ""],
         value: parseEther('0.002'),
         chainId: sepolia.id,
         });
