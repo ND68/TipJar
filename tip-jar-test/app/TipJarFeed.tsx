@@ -1,21 +1,33 @@
 import { useEffect, useState } from "react";
 import { usePublicClient } from "wagmi";
-import { formatEther } from "viem";
-import { TIP_JAR_ABI, CONTRACT_ADDRESS } from './constants.js'
+import { formatEther, Address } from "viem";
+import { TIP_JAR_ABI } from './constants.js'
 
 
-const TipJarFeed = () => {
+type TipJarProps = {
+  CONTRACT_ADDRESS?: string | null;
+};
+
+type Entry = {
+    address: string;
+    nickname: string;
+    amount: bigint;
+    message: string;
+    timestamp: bigint;
+}
+
+const TipJarFeed = ({ CONTRACT_ADDRESS }: TipJarProps) => {
     const publicClient = usePublicClient();
-    const [feed, setFeed] = useState([]);
+    const [feed, setFeed] = useState<Entry[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchFeed = async (showLoading = false) => {
         if (showLoading) setLoading(true);
-        const [senders, amounts, messages, names, timestamps] = await publicClient.readContract({
-            address: CONTRACT_ADDRESS,
+        const [senders, amounts, messages, names, timestamps] = await publicClient?.readContract({
+            address: CONTRACT_ADDRESS as Address,
             abi: TIP_JAR_ABI,
             functionName: "getTipHistory",
-        });
+        }) as [string[], bigint[], string[], string[], bigint[]];
 
         const data = senders.map((addr, i) => ({
             address: addr,
@@ -43,7 +55,7 @@ const TipJarFeed = () => {
         return () => clearInterval(interval);
     }, [publicClient]);
 
-    const formatTimestamp = (ts) => {
+    const formatTimestamp = (ts: bigint) => {
         const now = Date.now();
         const date = new Date(Number(ts) * 1000); // seconds → ms
         const diff = now - date.getTime();

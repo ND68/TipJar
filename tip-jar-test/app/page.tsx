@@ -1,12 +1,17 @@
 "use client"
 
+import { useState } from "react";
 import { WagmiProvider, createConfig, http } from 'wagmi';
 import { sepolia } from 'viem/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
-import TipJar from './TipJar.jsx';
-import TipJarLeaderboard from './TipJarLeaderboard.jsx';
-import TipJarFeed from './TipJarFeed.jsx'
+import TipJar from './TipJar';
+import TipJarLeaderboard from './TipJarLeaderboard';
+import TipJarFeed from './TipJarFeed'
+
+// MAIN TIPJAR CONTRACT ADDRESS
+// PASTE TIPJAR ADDRESS HERE AFTER DEPLOYING TIPJAR
+const CONTRACT_ADDRESS = "ENTER CONTRACT ADDRESS HERE";
 
 // Creates link to an Ethereum node
 const config = createConfig(
@@ -16,7 +21,7 @@ const config = createConfig(
       [sepolia.id]: http(),
     },
     appName: "TipJar Widget",
-    walletConnectProjectId: 'YOUR_WALLETCONNECT_PROJECT_ID',
+    walletConnectProjectId: 'YOUR_WALLETCONNECT_PROJECT_ID', // Not needed if using MetaMask
   }),
 );
 const queryClient = new QueryClient();

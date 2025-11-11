@@ -1,17 +1,25 @@
 import { useAccount, useWriteContract, useReadContract } from 'wagmi';
-import { parseEther, encodeFunctionData } from 'viem';
+import { parseEther, Address } from 'viem';
 import { sepolia } from 'viem/chains';
 import { useState, useEffect } from 'react';
-import { TIP_JAR_ABI, CONTRACT_ADDRESS } from './constants.js'
+import { TIP_JAR_ABI } from './constants.js'
 import { ConnectKitButton } from 'connectkit';
 
 const DEFAULT_TIP_AMOUNT = '0.0003'; // Default tip amount in ETH, approx $1 USD
 const DEFAULT_MESSAGE = "Here's a tip!"; // Default message
 
+type TipJarProps = {
+  CONTRACT_ADDRESS?: string | null;
+  setContractAddress?: (address: string) => void;
+};
 
-const TipJar = () => {
+const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
+    const [isDeploying, setIsDeploying] = useState(false);
+    const [deployedAddress, setDeployedAddress] = useState<string | null>(null);
+
     const { address, isConnected } = useAccount();
     const [status, setStatus] = useState('Ready');
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [amount, setAmount] = useState(DEFAULT_TIP_AMOUNT);
     const [nickname, setNickname] = useState('');
@@ -19,6 +27,26 @@ const TipJar = () => {
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+
+    async function deployContract() {
+        try {
+            setIsDeploying(true);
+
+            // TODO: use ethers.js Wallet + Factory here
+            // const contract = await factory.deploy();
+            // await contract.deployed();
+
+        setTimeout(() => {
+            const fakeAddress = "0xFAKE_DEPLOYED_123";
+            setDeployedAddress(fakeAddress);
+            setIsDeploying(false);
+        }, 2000);
+
+        } catch (err) {
+        console.error(err);
+        setIsDeploying(false);
+        }
+    }
 
     // Transaction handling hooks
     const { writeContract, data: txHash, isPending, isSuccess, error } = useWriteContract();
@@ -34,7 +62,7 @@ const TipJar = () => {
         closeModal();
 
         writeContract({
-            address: CONTRACT_ADDRESS,
+            address: CONTRACT_ADDRESS as Address,
             abi: TIP_JAR_ABI,
             functionName: 'tip',
             args: [message, nickname],
@@ -57,24 +85,47 @@ const TipJar = () => {
 
     // Get the owner from chain
     const { data: owner } = useReadContract({
-        address: CONTRACT_ADDRESS,
+        address: CONTRACT_ADDRESS as Address,
         abi: TIP_JAR_ABI,
         functionName: "owner",
         chainId: sepolia.id,
     });
 
+    const ownerAddress = owner as string | undefined;
     // Compares contract owner to connected wallet address
-    const isOwner = isConnected && owner?.toLowerCase() === address?.toLowerCase();
+    const isOwner = isConnected && ownerAddress?.toLowerCase() === address?.toLowerCase();
 
     // Withdraw function
     const handleWithdraw = () => {
         writeContract({
-            address: CONTRACT_ADDRESS,
+            address: CONTRACT_ADDRESS as Address,
             abi: TIP_JAR_ABI,
             functionName: 'withdraw',
             chainId: sepolia.id,
         });
     };
+
+    if (!CONTRACT_ADDRESS && !deployedAddress) {
+        return (
+            <div className="flex flex-col items-center gap-4 w-full p-4 max-w-sm bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
+                <h2 className="text-xl font-bold mb-2 text-black">Create Your Tip Jar</h2>
+                <p className="mb-4 text-gray-600">
+                Deploy a new on-chain instance of your tip jar. Only costs gas.
+                </p>
+
+                    <button
+                    className="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer disabled:opacity-50"
+                    disabled={isDeploying}
+                    onClick={deployContract}
+                >
+                    {isDeploying ? "Deploying..." : "Deploy Tip Jar"}
+                </button>
+            </div>
+        );
+    }
+
+    // Resolve the address that we actually want to operate on
+    const NEW_CONTRACT_ADDRESS = CONTRACT_ADDRESS ?? deployedAddress;
 
     return (
         <div className="flex flex-col items-center gap-4 w-full p-4 max-w-sm bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">

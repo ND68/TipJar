@@ -1,6 +1,3 @@
-// Contract Address
-export const CONTRACT_ADDRESS = "0x38Fca610A2fc6de68a12f13C15d23CAa7fbfbba3";
-
 // ABIs for precisely defining function calls
 export const TIP_JAR_ABI = [
   // Tip function

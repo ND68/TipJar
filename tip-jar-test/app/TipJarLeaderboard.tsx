@@ -2,12 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { usePublicClient } from "wagmi";
-import { formatEther } from "viem";
-import { TIP_JAR_ABI, CONTRACT_ADDRESS } from './constants.js'
+import { formatEther, Address } from "viem";
+import { TIP_JAR_ABI } from './constants.js'
 
-const TipJarLeaderboard = () => {
+type TipJarProps = {
+  CONTRACT_ADDRESS?: string | null;
+};
+
+type Contributor = {
+  address: string;
+  amount: bigint;
+  name: string;
+};
+
+const TipJarLeaderboard = ({ CONTRACT_ADDRESS }: TipJarProps) => {
   const publicClient = usePublicClient();
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState<Contributor[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchLeaderboard = async (showLoading = false) => {
@@ -15,11 +25,11 @@ const TipJarLeaderboard = () => {
         if (showLoading) setLoading(true);
 
         // Fetch all contributors and amounts
-        const [addresses, amounts, names] = await publicClient.readContract({
-            address: CONTRACT_ADDRESS,
+        const [addresses, amounts, names] = await publicClient?.readContract({
+            address: CONTRACT_ADDRESS as Address,
             abi: TIP_JAR_ABI,
             functionName: "getContributors",
-        });
+        }) as [string[], bigint[], string[]];
 
         // 2️⃣ Map addresses and amounts into objects
         const data = addresses.map((addr, i) => ({
