@@ -79,7 +79,7 @@ const TipJarFeed = ({ CONTRACT_ADDRESS }: TipJarProps) => {
     };
 
     return (
-    <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-20">
+    <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-semibold mb-4 border-b text-black pb-2">Feed</h2>
         {loading ? (
             <p className="text-center py-4 text-gray-700">Loading Feed...</p>

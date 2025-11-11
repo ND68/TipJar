@@ -126,7 +126,7 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
 
     if (!CONTRACT_ADDRESS || !isAddress(CONTRACT_ADDRESS)) {
         return (
-            <div className="flex flex-col items-center gap-4 w-full p-6 bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
+        <div className="flex flex-col items-center gap-4 p-4 bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
                 <h2 className="text-xl font-bold mb-2 text-black">Create Your Tip Jar</h2>
                 <p className="text-black">
                     Deploy a new on-chain instance of your tip jar. 
@@ -137,7 +137,7 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                 </div>
 
                 <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-500 text-white rounded-xl cursor-pointer disabled:opacity-50 -mt-3"
                     disabled={isDeploying}
                     onClick={handleDeploy}
                 >
@@ -157,10 +157,10 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                         </span>
                     </div>
                 ) : 
-                    <span className='text-black'>{status}</span>
+                    <span className='text-sm text-gray-700 mt-3'>{status}</span>
                 }
 
-                {txHash && (
+                {txHash && isConnected && (
                     <a
                     className="text-green-700 underline text-sm block"
                     href={`https://sepolia.etherscan.io/tx/${txHash}`}
@@ -177,7 +177,7 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
     return (
         <div className="flex flex-col items-center gap-4 w-full p-4 max-w-sm bg-white/70 backdrop-blur-sm border rounded-xl shadow-sm">
             <div>
-                <h2 className="text-lg font-semibold text-black">Support the Creator!</h2>
+                <h2 className="text-xl font-semibold text-black">Support the Creator!</h2>
                 <p className="text-sm text-gray-600 mb-4">
                     Send some ETH as a thank you!
                 </p>
@@ -202,7 +202,7 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                             <button
                                 onClick={openModal}
                                 disabled={isPending}
-                                className={`w-full py-2 rounded-lg font-semibold text-white transition
+                                className={`w-full py-2 rounded-xl font-semibold text-white transition
                                 ${isPending
                                     ? "bg-gray-400 cursor-not-allowed"
                                     : "bg-blue-500 hover:bg-blue-600 active:scale-[0.98]"}
@@ -272,7 +272,7 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                     </div>
                 )}
 
-                {txHash && (
+                {txHash && isConnected && (
                     <a
                     className="text-green-700 underline text-sm mt-2 block"
                     href={`https://sepolia.etherscan.io/tx/${txHash}`}

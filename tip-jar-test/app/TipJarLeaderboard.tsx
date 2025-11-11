@@ -58,7 +58,7 @@ const TipJarLeaderboard = ({ CONTRACT_ADDRESS }: TipJarProps) => {
   }, [publicClient]);
 
   return (
-    <div className="p-4 rounded-lg w-full shadow-lg mx-auto text-black bg-white mt-20">
+    <div className="p-4 rounded-lg w-full shadow-lg mx-auto text-black bg-white">
       <h2 className="text-2xl font-semibold mb-4 border-b text-black pb-2">Top Contributors</h2>
       {loading ? (
         <p className="text-center py-4 text-gray-700">Loading Leaderboard...</p>

@@ -11,7 +11,7 @@ import TipJarFeed from './TipJarFeed'
 
 // MAIN TIPJAR CONTRACT ADDRESS
 // PASTE TIPJAR ADDRESS HERE AFTER DEPLOYING TIPJAR
-const CONTRACT_ADDRESS = "0x56dbc51a86440b123e93aebb1f4e277a014510d3";
+const CONTRACT_ADDRESS = "0x531933327279eda5cb323faf2cffc08fa228db63";
 
 // Creates link to an Ethereum node
 const config = createConfig(
@@ -28,7 +28,7 @@ const queryClient = new QueryClient();
 
 export default function Home() {
   return (
-    <div className="flex flex-col relative min-h-screen w-full items-center text-center bg-zinc-50 font-sans py-30 px-[20%]">
+    <div className="flex flex-col relative min-h-screen w-full items-center text-center bg-zinc-50 font-sans py-30 px-[15%]">
           <h1 className="text-5xl font-semibold leading-10 tracking-tight text-black p-10">
             The Great Hot Dog Debate: Are Hot Dogs Sandwiches?
           </h1>
@@ -59,10 +59,16 @@ export default function Home() {
           <QueryClientProvider client={queryClient}>
             <WagmiProvider config={config}>
               <ConnectKitProvider >
-                <div className="flex flex-col items-center bg-gray-100 p-4 rounded-xl w-full">
-                  <TipJar CONTRACT_ADDRESS={CONTRACT_ADDRESS} /> 
-                  <TipJarLeaderboard CONTRACT_ADDRESS={CONTRACT_ADDRESS}/>
-                  <TipJarFeed CONTRACT_ADDRESS={CONTRACT_ADDRESS}/>
+                <div className="flex justify-between p-4 rounded-xl w-full h-[80%] bg-gray-100 mt-20">
+                  <div className="flex flex-col w-[50%] items-center">
+                    <TipJar CONTRACT_ADDRESS={CONTRACT_ADDRESS} />
+                    <div className="mt-20 w-full">
+                      <TipJarLeaderboard CONTRACT_ADDRESS={CONTRACT_ADDRESS}/>
+                    </div>
+                  </div>
+                  <div className="w-[40%] justify-center">
+                    <TipJarFeed CONTRACT_ADDRESS={CONTRACT_ADDRESS}/>
+                  </div>
                 </div>
               </ConnectKitProvider>
             </WagmiProvider>
