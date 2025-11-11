@@ -69,7 +69,7 @@ const TipJarLeaderboard = () => {
                     {idx + 1}. {address.slice(0, 6)}...{address.slice(-4)}
                 </span>
               </span>
-              <span>{Number(formatEther(amount)).toFixed(3)} ETH</span>
+              <span>{Number(formatEther(amount)).toFixed(4)} ETH</span>
             </li>
           ))}
         </ul>

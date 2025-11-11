@@ -92,7 +92,7 @@ const TipJarFeed = () => {
                     </div>
 
                     <div className="flex flex-col h-[80] justify-between items-end text-sm text-gray-500">
-                    <span>{parseFloat(formatEther(tip.amount)).toFixed(3)} ETH</span>
+                    <span>{parseFloat(formatEther(tip.amount)).toFixed(4)} ETH</span>
                     <span>{formatTimestamp(tip.timestamp)}</span>
                     </div>
                 </li>

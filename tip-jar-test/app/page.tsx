@@ -23,7 +23,7 @@ const queryClient = new QueryClient();
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen w-full items-center text-center bg-zinc-50 font-sans py-30 px-[20%]">
+    <div className="flex flex-col relative min-h-screen w-full items-center text-center bg-zinc-50 font-sans py-30 px-[20%]">
           <h1 className="text-5xl font-semibold leading-10 tracking-tight text-black p-10">
             The Great Hot Dog Debate: Are Hot Dogs Sandwiches?
           </h1>
@@ -54,7 +54,7 @@ export default function Home() {
           <QueryClientProvider client={queryClient}>
             <WagmiProvider config={config}>
               <ConnectKitProvider options={{ enforceSupportedChains: true }}>
-                <div className="flex flex-col items-center bg-gray-100 p-4 w-[50%] rounded-xl">
+                <div className="flex flex-col items-center bg-gray-100 p-4 rounded-xl">
                   <TipJar /> 
                   <TipJarLeaderboard />
                   <TipJarFeed />
