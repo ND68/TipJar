@@ -1,4 +1,4 @@
-import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt, UseWaitForTransactionReceiptReturnType} from 'wagmi';
+import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseEther, Address, isAddress } from 'viem';
 import { sepolia } from 'viem/chains';
 import { useState, useEffect } from 'react';
@@ -7,7 +7,7 @@ import { ConnectKitButton } from 'connectkit';
 
 const DEFAULT_TIP_AMOUNT = '0.0003'; // Default tip amount in ETH, approx $1 USD
 const DEFAULT_MESSAGE = "Here's a tip!"; // Default message
-const FACTORY_ADDRESS = "0x3dabcEd4Ba74451D5E023A83A99AbAf956f7C529" // Address of Tip Jar Factory Contract
+const FACTORY_ADDRESS = "0xE54A9116Fe581F61B7B06644650CA5c8B0524D38" // Address of Tip Jar Factory Contract
 
 type TipJarProps = {
   CONTRACT_ADDRESS?: string | null;
@@ -46,30 +46,33 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                 functionName: "createMyTipJar",
                 chainId: sepolia.id,
             });
-
-            if (!txHash) return;
-
-            // Wait for confirmation
-            const receipt = useWaitForTransactionReceipt({ hash: txHash });
-            const log = receipt.data;
-            console.log(log)
-            console.log(receipt)
-            if (!log) throw new Error("No TipJarCreated event found");
-
-            // const newAddress = log?.data as Address;
-            // if (newAddress) {
-            //     setStatus("TipJar deployed!");
-            //     setDeployedAddress(newAddress);
-            // } else {
-            //     setStatus("Deployment succeeded but couldn't read address from event.");
-            // }
-            // setIsDeploying(false);
+            setIsDeploying(false);
+            setStatus("Waiting on Contract Address...");
         } catch (err) {
             console.error(err);
             setIsDeploying(false);
             setStatus("Deployment failed. See console for details.");
         }
     };
+
+    const receipt = useWaitForTransactionReceipt({hash: txHash});
+    
+    useEffect(() => {
+        if (!receipt.data) return;
+
+        const log = receipt.data.logs[0];
+        console.log(log)
+
+        const newAddress = "0x" + log.data.slice(-40) as Address;
+        console.log(newAddress)
+        
+        if (newAddress) {
+            setStatus("TipJar deployed!");
+            setDeployedAddress(newAddress);
+        } else {
+            setStatus("Deployment succeeded but couldn't read address from event.");
+        }
+    }, [receipt.data, txHash])
 
     const handleTip = () => {
         if (!isConnected) {
@@ -154,9 +157,11 @@ const TipJar = ({ CONTRACT_ADDRESS }: TipJarProps) => {
                     View on Etherscan
                     </a>
                 )}
-                {deployedAddress && (
-                    <span>{deployedAddress}</span>
-                )}
+                {deployedAddress ? (
+                    <span className='text-black'>{deployedAddress}</span>
+                ) : 
+                    <span className='text-black'>{status}</span>
+                }
             </div>
         );
     }
