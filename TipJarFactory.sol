@@ -8,14 +8,14 @@ import "./TipJar.sol";
  * @dev A contract factory used to deploy TipJar contracts for everyone
  */
 contract TipJarFactory {
-    mapping(address => address) public tipJarOf;
+    // Mapping from creator address to their TipJar addresses
+    mapping(address => address[]) public tipJarsOf;
     event TipJarCreated(address indexed creator, address tipJar);
 
     function createMyTipJar() external {
-        require(tipJarOf[msg.sender] == address(0), "TipJar already exists");
-
         TipJar jar = new TipJar(msg.sender);
-        tipJarOf[msg.sender] = address(jar);
+        
+        tipJarsOf[msg.sender].push(address(jar));
 
         emit TipJarCreated(msg.sender, address(jar));
     }
