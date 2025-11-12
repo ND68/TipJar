@@ -1,14 +1,45 @@
 # TipJar - A DeFi Tipping Widget
 TipJar transforms traditional digital tipping into a transparent, gamified, and trustless payment system. Unlike sending crypto directly to a wallet, TipJar uses a Solidity smart contract to guarantee public record-keeping and instantaneous community recognition.
 
-This project is built as an easily embeddable widget, allowing any creator, blogger, or service provider to drop a single line of code onto their website to accept tips in Ether.
+**Check out a live demo!** [View the deployed app here](https://tip-jar-three.vercel.app/)
 
-## Core Features & Value Proposition
+## Overview
 
-- Trustless Tipping: Eliminates payment processor fees and delays. Funds are transferred instantly and directly to the creator (minus only the blockchain gas fee).
+TipJar allows creators, streamers, and communities to accept Ethereum-based tips through a fully on-chain system.  
+Each tip is recorded on the blockchain and publicly visible, creating a transparent, trustless feedback loop between creators and supporters.
 
-- Immutable Leaderboard: All tips are recorded on a publicly verifiable ledger (the smart contract). The project's frontend aggregates this data into a dynamic Top Contributors leaderboard and a Live Tip Feed.
+The system consists of:
+- **A Solidity smart contract factory** (`TipJarFactory.sol`) that deploys individual tip jar contracts (`TipJar.sol`) per owner.
+- **An interactive React + Next.js frontend**, powered by Wagmi, Viem, and ConnectKit.
+- **A leaderboard and live feed**, displaying all recent tips and top contributors.
 
-- Structured Feedback: Tippers can include a verifiable public message with their donation, enhancing the connection between the creator and their audience.
+## Core Features
 
-- Embeddable Component: The frontend is designed as a single, self-contained React component (TipJar.jsx) that can be integrated into any existing website with minimal effort, providing a seamless Web3 experience without requiring the host site to manage blockchain connections.
+### Trustless Tipping  
+Funds go directly from supporter → creator without intermediaries or fees, recorded permanently on-chain (minus gas).
+
+### Immutable Leaderboard  
+All tips are logged in the TipJar contract and visualized in real time on the frontend.  
+The leaderboard ranks supporters transparently, making recognition instant and verifiable.
+
+### Public Messages  
+Supporters can attach personalized, on-chain messages with their tips, strengthening community engagement.
+
+### Embeddable Widget  
+The TipJar component can be dropped into **any website** with one import — creators can integrate decentralized tipping without managing wallets or backend infrastructure.
+
+### Multi-Contract Support  
+Each creator can deploy their own TipJar instance using the `TipJarFactory` contract, isolating funds and records, and allowing for full ownership.
+
+## Tech Stack
+
+**Smart Contracts**
+- Solidity  
+- Sepolia Testnet Deployment  
+
+**Frontend**
+- Next.js (React)  
+- TailwindCSS  
+- Wagmi + Viem for on-chain interactions  
+- ConnectKit for wallet integration  
+- Vercel for deployment  
